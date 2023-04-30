@@ -29,54 +29,38 @@
                     <a class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false">
                         <i class="ti-bell font-20"></i>
-
                     </a>
                     <div class="dropdown-menu mailbox animated bounceInDown">
-                                <span class="with-arrow">
-                                    <span class="bg-primary"></span>
-                                </span>
                         <ul class="list-style-none">
                             <li>
                                 <div class="drop-title bg-primary text-white">
-                                    <span class="m-b-0 m-t-5">{{count(auth()->user()->unreadNotifications)}} New</span>
+                                    @if($count>0)
+                                        <span class="m-b-0 m-t-5">{{$count}} New</span>
+                                    @endif
                                     <span class="font-light">Notifications</span>
                                 </div>
                             </li>
-                            @if(count(auth()->user()->Notifications)>0)
+                            @if($notifications>0)
                                 <li>
                                     <div class="message-center notifications">
-                                        @foreach(auth()->user()->Notifications as $notification)
-                                            <!-- Message -->
+                                        @foreach((array)$notifications as $key => $value)
                                             <a href="javascript:void(0)" class="message-item">
                                                 <span class="btn btn-danger btn-circle">
                                                     <i class="fa fa-link"></i>
                                                 </span>
                                                 <div class="mail-contnet">
-                                                    <h5 class="message-title">{{$notification->data['user']['name']}}</h5>
-                                                    @if($notification->read_at == null)
-                                                        <form class="float-right" action="{{ URL('notification/read/'.$notification->id) }}"
-                                                              method="POST">
-                                                            @csrf
-                                                            <button type="submit"
-                                                                    class="btn btn-link px-3 mb-0">
-                                                                <i class=' far fa-envelope'
-                                                                   style='font-size:20px'></i>
-                                                            </button>
-                                                        </form>
-                                                    @else
-                                                        <i class='float-right far fa-envelope-open'
-                                                           style='font-size:20px'></i>
-                                                    @endif
-                                                    <span class="mail-desc">
-                                                        @if($notification->data['notifiable']['status']==1)
-                                                            blog {{$notification->data['notifiable']['id']}} is Approved
-                                                        @else
-                                                            blog {{$notification->data['notifiable']['id']}} is Not
-                                                            Approved
-                                                        @endif
-                                                    </span>
-                                                    <span
-                                                        class="time">{{date_format($notification->created_at,"h:i A")}}</span>
+                                                    <div class="row align-items-center">
+                                                        <div class="col ps-0 ms-2">
+                                                            <div class="float-right">
+                                                                <small class="text-danger"> {{$value['at']}}</small>
+                                                            </div>
+                                                            <br>
+                                                            <div>
+                                                                <small
+                                                                    class="font-small mt-1 mb-0">{{ $value['body'] }}</small>
+                                                            </div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </a>
                                         @endforeach
@@ -85,8 +69,7 @@
                             @else
                                 <li>
                                     <a class="nav-link text-center m-b-5" href="javascript:void(0);">
-                                        <strong>No unread Notification</strong>
-                                        <i class="fa fa-angle-right"></i>
+                                        <strong>No Notifications</strong>
                                     </a>
                                 </li>
                             @endif
@@ -118,7 +101,6 @@
                     <a class="nav-link dropdown-toggle text-muted waves-effect waves-dark pro-pic" href=""
                        data-toggle="dropdown" aria-haspopup="true"
                        aria-expanded="false">
-                        <img src="{{asset('admin/assets/images/logo-icon.png')}}" alt="user" class="rounded-circle"
                         <img src="{{asset('admin/assets/images/logo-icon.png')}}" alt="user" class="rounded-circle"
                              width="31">
                     </a>

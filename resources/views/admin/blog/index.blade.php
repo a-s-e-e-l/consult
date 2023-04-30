@@ -67,10 +67,10 @@
                                     <td>{{ $blog->content }}</td>
                                     @if(Auth::user()->role == 1)
                                         <td>@if($blog->status==0)
-                                                <form action="{{ URL('blog/acceptance/'.$blog->id) }}" method="POST">
+                                                <form action="{{ URL('send-notification/'.$blog->id) }}" method="POST">
                                                     @csrf
                                                     <span class="text-danger font-weight-bold">Not Approved</span>
-                                                    <button type="submit"
+                                                    <button id="accept" type="submit"
                                                             onclick="return confirm('Are You Sure To Acceptance ??')"
                                                             class="@if(Auth::user()->role != 1)disabled @endif btn btn-link text-success px-3 mb-0">
                                                         <i class='far fa-thumbs-up' style='font-size:20px'></i>
@@ -78,7 +78,7 @@
                                                     </button>
                                                 </form>
                                             @else
-                                                <form action="{{ URL('blog/notAcceptance/'.$blog->id) }}" method="POST">
+                                                <form action="{{ URL('notAccept/'.$blog->id) }}" method="POST">
                                                     @csrf
                                                     <span class="text-success font-weight-bold">Approved</span>
                                                     <button type="submit"

@@ -9,13 +9,27 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Factory;
 
 class CategoryController extends Controller
 {
     public function index()
     {
         $categories = Category::withTrashed()->paginate(7);
-        return view('admin.category.index')->with('categories', $categories);
+        $firebase = (new Factory)
+            ->withServiceAccount('C:\Users\Aseel\Documents\Laravel\first\app\Http\Controllers\first-35e36-firebase-adminsdk-a5mbq-c57a1403b6.json')
+            ->withDatabaseUri('https://first-35e36-default-rtdb.firebaseio.com');
+        $database = $firebase->createDatabase();
+        $notifications = $database
+            ->getReference('notifications')->getSnapshot()->getvalue();
+        usort($notifications, function ($a, $b) {
+            $at1 = strtotime($a['at']);
+            $at2 = strtotime($b['at']);
+            return $at2 - $at1; // Compare in descending order
+        });
+        $count = $database
+            ->getReference('notifications')->getSnapshot()->numChildren();
+        return view('admin.category.index',compact('notifications','count','categories'));
     }
 
     public function create()

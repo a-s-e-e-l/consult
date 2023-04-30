@@ -39,7 +39,7 @@
                                              style="width: 45px; height: 45px;">
                                         <div class="ps-3">
                                             <h6><a href="">{{$comment->member->name}}</a>
-                                                <small><i>{{date_format($comment->created_at,"d ")}}{{ date("M", mktime(date_format($comment->created_at,"m")))}}{{date_format($comment->created_at," Y")}}</i></small>
+                                                <small><i>{{date_format($comment->created_at,"j ")}}{{date_format($comment->created_at,"M")}}{{date_format($comment->created_at," Y")}}</i></small>
                                             </h6>
                                             <p>{{$comment->content}}</p>
                                             <button class="btn btn-sm btn-light">Reply</button>
@@ -53,7 +53,7 @@
                                                          style="width: 45px; height: 45px;">
                                                     <div class="ps-3">
                                                         <h6><a href="">{{$com->member->name}}</a>
-                                                            <small><i>{{date_format($com->created_at,"d ")}}{{ date("M", mktime(date_format($com->created_at,"m")))}}{{date_format($com->created_at," Y")}}</i></small>
+                                                            <small><i>{{date_format($com->created_at,"d ")}}{{date_format($comment->created_at,"M")}}{{date_format($com->created_at," Y")}}</i></small>
                                                         </h6>
                                                         <p>{{$com->content}}</p>
                                                         {{--                                                        <button class="btn btn-sm btn-light">Reply</button>--}}
@@ -72,23 +72,50 @@
                 <!-- Comment Form Start -->
                 <div class="bg-secondary p-5">
                     <h2 class="mb-4">Leave a comment</h2>
-                    <form>
+                    <form class="py-2 px-4" action="{{ URL('blog/review/'.$blog->id) }}"
+                          enctype="multipart/form-data" style="box-shadow: 0 0 10px 0 #ddd;" method="POST"
+                          autocomplete="off">
+                        @csrf
+                        <div class="row g-3">
+                            <div class="col-12">
+                                @if(Session::has('flash_msg_success'))
+                                    <div class="alert alert-success alert-dismissible p-2">
+                                        <a href="#" class="close" data-dismiss="alert" aria-label="close"></a>
+                                        <strong>Success!</strong> {!! session('flash_msg_success')!!}.
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
                         <div class="row g-3">
                             <div class="col-12 col-sm-6">
                                 <input type="text" class="form-control bg-white border-0" placeholder="Your Name"
-                                       style="height: 55px;">
+                                       style="height: 55px;" name="name">
                             </div>
                             <div class="col-12 col-sm-6">
                                 <input type="email" class="form-control bg-white border-0" placeholder="Your Email"
-                                       style="height: 55px;">
+                                       style="height: 55px;" name="email">
                             </div>
-                            <div class="col-12">
-                                <input type="text" class="form-control bg-white border-0" placeholder="Website"
-                                       style="height: 55px;">
+                            <div class="col-12 col-sm-6">
+                                <input type="text" class="form-control bg-white border-0" placeholder="Phone"
+                                       style="height: 55px;" name="phone">
+                            </div>
+                            <div class="col-12 col-sm-6">
+                                <div class="rate">
+                                    <input type="radio" id="star5" class="rate" name="rating" value="5"/>
+                                    <label for="star5" title="text">5 stars</label>
+                                    <input type="radio" id="star4" class="rate" name="rating" value="4"/>
+                                    <label for="star4" title="text">4 stars</label>
+                                    <input type="radio" id="star3" class="rate" name="rating" value="3"/>
+                                    <label for="star3" title="text">3 stars</label>
+                                    <input type="radio" id="star2" class="rate" name="rating" value="2">
+                                    <label for="star2" title="text">2 stars</label>
+                                    <input type="radio" id="star1" class="rate" name="rating" value="1"/>
+                                    <label for="star1" title="text">1 star</label>
+                                </div>
                             </div>
                             <div class="col-12">
                                 <textarea class="form-control bg-white border-0" rows="5"
-                                          placeholder="Comment"></textarea>
+                                          placeholder="Comment" name="comment"></textarea>
                             </div>
                             <div class="col-12">
                                 <button class="btn btn-primary w-100 py-3" type="submit">Leave Your Comment</button>
@@ -116,7 +143,8 @@
                         <h2 class="mb-4">Categories</h2>
                         <div class="d-flex flex-column justify-content-start bg-secondary p-4">
                             @foreach ($categories as $category )
-                                <a class="h5 mb-3" href="{{Url('blog/grid',$category->id)}}"><i class="bi bi-arrow-right text-primary me-2"></i>{{ $category->title}}</a>
+                                <a class="h5 mb-3" href="{{Url('blog/grid',$category->id)}}"><i
+                                        class="bi bi-arrow-right text-primary me-2"></i>{{ $category->title}}</a>
                             @endforeach
                         </div>
                     </div>
@@ -129,8 +157,10 @@
                     @if(!count($blogsOrder)<1)
                         @foreach ($blogsOrder as $blog )
                             <div class="d-flex mb-3 justify-content-start bg-secondary">
-                                <img class="img-fluid" src="{{$blog->image}}" style="width: 100px; height: 100px; object-fit: cover;" alt="">
-                                <a href="{{url('blog/detail',$blog->id)}}" class="h5 d-flex align-items-center bg-secondary px-3 mb-0">{{$blog->title}}
+                                <img class="img-fluid" src="{{$blog->image}}"
+                                     style="width: 100px; height: 100px; object-fit: cover;" alt="">
+                                <a href="{{url('blog/detail',$blog->id)}}"
+                                   class="h5 d-flex align-items-center bg-secondary px-3 mb-0">{{$blog->title}}
                                 </a>
                             </div>
                         @endforeach

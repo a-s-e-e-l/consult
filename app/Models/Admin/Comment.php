@@ -13,6 +13,9 @@ class Comment extends Model
     public function Member(){
         return $this->belongsTo('App\Models\admin\Member','user_id');
     }
+    public function Users(){
+        return $this->belongsTo('App\Models\User','user_id');
+    }
     public function childrenComments() {
         return $this->hasMany('App\Models\admin\Comment','comment_id');
     }

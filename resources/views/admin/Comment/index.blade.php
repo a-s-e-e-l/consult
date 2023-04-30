@@ -21,8 +21,6 @@
             <div class="card">
                 <div class="card-body">
                     <div class="d-md-flex align-items-center">
-                        <div>
-                        </div>
                         <div class="ml-auto">
                             <div class="dl">
                                 <a class="btn btn-secondary"

@@ -10,11 +10,14 @@ use App\Http\Controllers\Admin\ServiceController;
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Auth\loginMemberController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FirebaseController;
 use App\Http\Controllers\LocalizationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Website\WebsiteController;
 use Illuminate\Support\Facades\Route;
+use Kreait\Firebase\Factory;
 
 /*
 |--------------------------------------------------------------------------
@@ -27,15 +30,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/send-notification', [NotificationController::class, 'sendOfferNotification']);
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')
     ->controller(ProfileController::class)->group(function () {
@@ -53,6 +53,7 @@ Route::controller(websiteController::class)->group(function () {
         ->name('blog.grid');
     Route::get('blog/detail/{id}', 'blogDetail')
         ->name('blog.detail');
+    Route::post('blog/review/{id}', 'reviewBlog');
 });
 
 Route::prefix('member')->group(function () {
@@ -170,3 +171,11 @@ Route::middleware(['auth', 'isAdmin'])
         Route::get('content/search', 'search')->name('content.search');
     });
 require __DIR__ . '/auth.php';
+
+Route::get('/notifications', [FirebaseController::class, 'index']);
+Route::post('send-notification/{id}', [FirebaseController::class, 'store']);
+Route::post('notAccept/{id}', [FirebaseController::class, 'notAccept']);
+//Route::get('send-notification', [NotificationController::class, 'sendOfferNotification']);
+//Route::post('notification/read/{id}',[NotificationController::class,'read']);
+//Route::patch('/fcm-token', [NotificationController::class, 'updateToken'])->name('fcmToken');
+//Route::post('/send-notification',[NotificationController::class,'notification'])->name('notification');

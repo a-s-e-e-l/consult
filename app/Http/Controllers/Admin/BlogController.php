@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
+use Kreait\Firebase\Factory;
 use Yajra\DataTables\Facades\DataTables;
 
 class BlogController extends Controller
@@ -25,7 +26,22 @@ class BlogController extends Controller
         foreach ($blogs as $blog) {
             $blog->image = storage::disk('public')->url($blog->image);
         }
-        return view('admin.blog.index')->with('blogs', $blogs);
+        $firebase = (new Factory)
+            ->withServiceAccount('C:\Users\Aseel\Documents\Laravel\first\app\Http\Controllers\first-35e36-firebase-adminsdk-a5mbq-c57a1403b6.json')
+            ->withDatabaseUri('https://first-35e36-default-rtdb.firebaseio.com');
+        $database = $firebase->createDatabase();
+        $notifications = $database
+            ->getReference('notifications')->getSnapshot()->getvalue();
+        if($notifications>0){
+            usort($notifications, function ($a, $b) {
+                $at1 = strtotime($a['at']);
+                $at2 = strtotime($b['at']);
+                return $at2 - $at1; // Compare in descending order
+            });
+        }
+        $count = $database
+            ->getReference('notifications')->getSnapshot()->numChildren();
+        return view('admin.blog.index',compact('blogs','notifications','count'));
     }
 
     public function create()
